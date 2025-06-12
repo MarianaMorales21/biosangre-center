@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import "./App.css"; // Importa tus estilos si los tienes
+import React from "react"
+import "./App.css"
+const { useState, useEffect } = React
 
-// Componente de Icono
+// Icons Component
 const Icon = ({ name, className = "" }) => {
     const icons = {
         heart: "❤️",
@@ -18,267 +19,182 @@ const Icon = ({ name, className = "" }) => {
         award: "🏆",
         menu: "☰",
         x: "✕",
-    };
+        adn: "🧬",
+    }
 
-    return React.createElement("span", { className }, icons[name] || "?");
-};
+    return <span className={className}>{icons[name] || "?"}</span>
+}
 
-// Componente Header
+// Header Component
 const Header = ({ activeSection, scrollToSection }) => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     const navItems = [
         { id: "inicio", label: "Inicio" },
         { id: "quienes-somos", label: "Quiénes Somos" },
         { id: "servicios", label: "Servicios" },
-    ];
+    ]
 
-    return React.createElement(
-        "header",
-        { className: "header" },
-        React.createElement(
-            "div",
-            { className: "container" },
-            React.createElement(
-                "div",
-                { className: "header-content" },
-                React.createElement(
-                    "div",
-                    { className: "logo" },
-                    React.createElement(
-                        "div",
-                        { className: "logo-icon" },
-                        React.createElement(Icon, { name: "heart" })
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "logo-text" },
-                        React.createElement("h1", null, "Biosangre Center"),
-                        React.createElement("p", null, "C.A")
-                    )
-                ),
+    return (
+        <header className="header">
+            <div className="container">
+                <div className="header-content">
+                    <div className="logo">
+                        <div>
+                            <img src="logoBiosangreCenter.png" alt="Biosangre Center Logo" width={"80px"} height={"80px"} />
+                        </div>
+                        <div className="logo-text">
+                            <h1>Biosangre Center</h1>
+                            <p>C.A</p>
+                        </div>
+                    </div>
 
-                React.createElement(
-                    "nav",
-                    { className: "nav" },
-                    React.createElement(
-                        "ul",
-                        { className: "nav-links" },
-                        navItems.map((item) =>
-                            React.createElement(
-                                "li",
-                                { key: item.id },
-                                React.createElement(
-                                    "button",
-                                    {
-                                        className: `nav-link ${activeSection === item.id ? "active" : ""
-                                            }`,
-                                        onClick: () => scrollToSection(item.id),
-                                    },
-                                    item.label
-                                )
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "button",
-                        {
-                            className: "btn btn-primary",
-                            onClick: () => scrollToSection("contacto"),
-                        },
-                        "Contacto"
-                    )
-                ),
+                    <nav className="nav">
+                        <ul className="nav-links">
+                            {navItems.map((item) => (
+                                <li key={item.id}>
+                                    <button
+                                        className="nav-link"
+                                        onClick={() => scrollToSection(item.id)}
+                                    >
+                                        {item.label}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        <button className="btn btn-primary" onClick={() => scrollToSection("contacto")}>
+                            Contacto
+                        </button>
+                    </nav>
 
-                React.createElement(
-                    "button",
-                    {
-                        className: "mobile-menu-btn",
-                        onClick: () => setIsMenuOpen(!isMenuOpen),
-                    },
-                    React.createElement(Icon, { name: isMenuOpen ? "x" : "menu" })
-                )
-            ),
+                    <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                        <Icon name={isMenuOpen ? "x" : "menu"} />
+                    </button>
+                </div>
 
-            isMenuOpen &&
-            React.createElement(
-                "nav",
-                { className: "mobile-nav open" },
-                React.createElement(
-                    "ul",
-                    { className: "mobile-nav-links" },
-                    navItems.map((item) =>
-                        React.createElement(
-                            "li",
-                            { key: item.id },
-                            React.createElement(
-                                "button",
-                                {
-                                    className: `nav-link ${activeSection === item.id ? "active" : ""
-                                        }`,
-                                    onClick: () => {
-                                        scrollToSection(item.id);
-                                        setIsMenuOpen(false);
-                                    },
-                                },
-                                item.label
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "li",
-                        null,
-                        React.createElement(
-                            "button",
-                            {
-                                className: "btn btn-primary",
-                                onClick: () => {
-                                    scrollToSection("contacto");
-                                    setIsMenuOpen(false);
-                                },
-                            },
-                            "Contacto"
-                        )
-                    )
-                )
-            )
-        )
-    );
-};
+                {isMenuOpen && (
+                    <nav className="mobile-nav open">
+                        <ul className="mobile-nav-links">
+                            {navItems.map((item) => (
+                                <li key={item.id}>
+                                    <button
+                                        className="nav-link"
+                                        onClick={() => {
+                                            scrollToSection(item.id)
+                                            setIsMenuOpen(false)
+                                        }}
+                                    >
+                                        {item.label}
+                                    </button>
+                                </li>
+                            ))}
+                            <li>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        scrollToSection("contacto")
+                                        setIsMenuOpen(false)
+                                    }}
+                                >
+                                    Contacto
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                )}
+            </div>
+        </header>
+    )
+}
 
-// Componente Hero
+// Hero Section Component
 const HeroSection = ({ scrollToSection }) => {
     const stats = [
-        { number: "15+", label: "Años de Experiencia" },
-        { number: "50,000+", label: "Pacientes Atendidos" },
+        { number: "100%", label: "Comprometidos con tu salud" },
+        { number: "2025", label: "Año de Fundación" },
         { number: "24/7", label: "Servicio Disponible" },
         { number: "99.9%", label: "Precisión en Resultados" },
-    ];
+    ]
 
     const features = [
         {
-            icon: "shield",
-            title: "Certificación ISO",
-            description: "Calidad garantizada",
+            icon: "adn",
+            title: "Bioseguridad Certificable",
+            description: "Trazabilidad digital y protocolos sanitarios confiables",
         },
-        { icon: "clock", title: "Servicio 24/7", description: "Siempre disponibles" },
+        {
+            icon: "clock",
+            title: "Servicio 24/7",
+            description: "Atención continua, sin interrupciones",
+        },
         {
             icon: "award",
             title: "Excelencia Médica",
-            description: "Profesionales certificados",
+            description: "Equipo altamente capacitado y certificado",
         },
-    ];
+    ]
 
-    return React.createElement(
-        "section",
-        { id: "inicio", className: "hero" },
-        React.createElement(
-            "div",
-            { className: "container" },
-            React.createElement(
-                "div",
-                { className: "hero-content" },
-                React.createElement(
-                    "div",
-                    { className: "hero-text" },
-                    React.createElement("div", { className: "badge" }, "Líder en Servicios de Salud"),
-                    React.createElement(
-                        "h1",
-                        null,
-                        "Tu salud es nuestra",
-                        React.createElement("span", { className: "highlight" }, " prioridad")
-                    ),
-                    React.createElement(
-                        "p",
-                        null,
-                        "En Biosangre Center C.A ofrecemos servicios médicos especializados con tecnología de vanguardia y un equipo de profesionales altamente calificados para cuidar tu bienestar."
-                    ),
+    return (
+        <section id="inicio" className="hero">
+            <div className="container">
+                <div className="hero-content">
+                    <div className="hero-text">
+                        <div className="badge">Líder en Servicios de Salud</div>
+                        <h1>
+                            Tu salud es nuestra
+                            <span className="highlight"> prioridad</span>
+                        </h1>
+                        <p>
+                            En Biosangre Center C.A ofrecemos servicios médicos especializados con tecnología de vanguardia y un
+                            equipo de profesionales altamente calificados para cuidar tu bienestar.
+                        </p>
 
-                    React.createElement(
-                        "div",
-                        { className: "hero-buttons" },
-                        React.createElement(
-                            "button",
-                            {
-                                className: "btn btn-primary",
-                                onClick: () => scrollToSection("servicios"),
-                            },
-                            "Nuestros Servicios ",
-                            React.createElement(Icon, { name: "chevronRight" })
-                        ),
-                        React.createElement(
-                            "button",
-                            {
-                                className: "btn btn-secondary",
-                                onClick: () => scrollToSection("quienes-somos"),
-                            },
-                            "Conoce Más"
-                        )
-                    ),
+                        <div className="hero-buttons">
+                            <button className="btn btn-primary" onClick={() => scrollToSection("servicios")}>
+                                Nuestros Servicios <Icon name="chevronRight" />
+                            </button>
+                            <button className="btn btn-secondary" onClick={() => scrollToSection("quienes-somos")}>
+                                Conoce Más
+                            </button>
+                        </div>
 
-                    React.createElement(
-                        "div",
-                        { className: "stats" },
-                        stats.map((stat, index) =>
-                            React.createElement(
-                                "div",
-                                { key: index, className: "stat" },
-                                React.createElement("span", { className: "stat-number" }, stat.number),
-                                React.createElement("span", { className: "stat-label" }, stat.label)
-                            )
-                        )
-                    )
-                ),
+                        <div className="stats">
+                            {stats.map((stat, index) => (
+                                <div key={index} className="stat">
+                                    <span className="stat-number">{stat.number}</span>
+                                    <span className="stat-label">{stat.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                React.createElement(
-                    "div",
-                    { className: "hero-features" },
-                    features.map((feature, index) =>
-                        React.createElement(
-                            "div",
-                            { key: index, className: "feature" },
-                            React.createElement(
-                                "div",
-                                { className: "feature-icon" },
-                                React.createElement(Icon, { name: feature.icon })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "feature-text" },
-                                React.createElement("h3", null, feature.title),
-                                React.createElement("p", null, feature.description)
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    );
-};
+                    <div className="hero-features">
+                        {features.map((feature, index) => (
+                            <div key={index} className="feature">
+                                <div className="feature-icon">
+                                    <Icon name={feature.icon} />
+                                </div>
+                                <div className="feature-text">
+                                    <h3>{feature.title}</h3>
+                                    <p>{feature.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    )
+}
 
-// Componente About
+// About Section Component
 const AboutSection = () => {
     const features = [
-        {
-            icon: "users",
-            title: "Equipo Experto",
-            description: "Profesionales certificados",
-            color: "red",
-        },
-        {
-            icon: "microscope",
-            title: "Tecnología",
-            description: "Equipos de vanguardia",
-            color: "blue",
-        },
-        { icon: "shield", title: "Calidad", description: "Certificación ISO", color: "green" },
-        {
-            icon: "heart",
-            title: "Compromiso",
-            description: "Con tu salud",
-            color: "purple",
-        },
-    ];
+        { icon: "users", title: "Equipo Experto", description: "Profesionales certificados", color: "red" },
+        { icon: "microscope", title: "Tecnología", description: "Equipos de vanguardia", color: "blue" },
+        { icon: "shield", title: "Calidad", description: "Protocolos de salud", color: "green" },
+        { icon: "heart", title: "Compromiso", description: "Con tu bienestar", color: "purple" },
+    ]
 
     const values = [
         {
@@ -299,497 +215,340 @@ const AboutSection = () => {
             description: "Buscamos la mejora continua en todos nuestros servicios",
             color: "green",
         },
-    ];
+    ]
 
-    return React.createElement(
-        "section",
-        { id: "quienes-somos", className: "about" },
-        React.createElement(
-            "div",
-            { className: "container" },
-            React.createElement(
-                "div",
-                { className: "section-header" },
-                React.createElement("h2", null, "Quiénes Somos"),
-                React.createElement(
-                    "p",
-                    null,
-                    "Somos una empresa líder en servicios de salud especializados, comprometidos con la excelencia médica y el bienestar de nuestros pacientes desde hace más de 15 años."
-                )
-            ),
+    return (
+        <section id="quienes-somos" className="about">
+            <div className="container">
+                <div className="section-header">
+                    <h2>Quiénes Somos</h2>
+                    <p>
+                        BioSangre Center, C.A. es una compañía anónima especializada en el procesamiento, análisis y distribución de sangre y sus derivados, así como en la realización de análisis clínicos avanzados. Nacemos con la misión de ofrecer soluciones eficientes, seguras y tecnológicamente innovadoras al sector salud, mejorando la trazabilidad, bioseguridad y calidad de vida de nuestros pacientes y aliados institucionales.
+                    </p>
+                </div>
 
-            React.createElement(
-                "div",
-                { className: "about-content" },
-                React.createElement(
-                    "div",
-                    { className: "about-text" },
-                    React.createElement(
-                        "div",
-                        null,
-                        React.createElement("h3", null, "Nuestra Misión"),
-                        React.createElement(
-                            "p",
-                            null,
-                            "Proporcionar servicios médicos especializados de la más alta calidad, utilizando tecnología de vanguardia y contando con un equipo de profesionales altamente capacitados para contribuir al diagnóstico, tratamiento y prevención de enfermedades."
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        null,
-                        React.createElement("h3", null, "Nuestra Visión"),
-                        React.createElement(
-                            "p",
-                            null,
-                            "Ser reconocidos como la empresa líder en servicios de laboratorio clínico y banco de sangre en Venezuela, expandiendo nuestros servicios a nivel nacional e internacional, manteniendo siempre los más altos estándares de calidad y excelencia."
-                        )
-                    )
-                ),
+                <div className="about-content">
+                    <div className="about-text">
+                        <div>
+                            <h3>Nuestra Misión</h3>
+                            <p>
+                                Brindar servicios integrales de gestión y distribución de sangre, junto con análisis clínicos confiables, respaldados por tecnología avanzada, garantizando trazabilidad, seguridad, precisión diagnóstica y eficiencia operativa, en beneficio de instituciones de salud y pacientes.
+                            </p>
+                        </div>
 
-                React.createElement(
-                    "div",
-                    { className: "about-features" },
-                    React.createElement(
-                        "div",
-                        { className: "features-grid" },
-                        features.map((feature, index) =>
-                            React.createElement(
-                                "div",
-                                { key: index, className: "feature-item" },
-                                React.createElement(
-                                    "div",
-                                    { className: `feature-item-icon ${feature.color}` },
-                                    React.createElement(Icon, { name: feature.icon })
-                                ),
-                                React.createElement("h4", null, feature.title),
-                                React.createElement("p", null, feature.description)
-                            )
-                        )
-                    )
-                )
-            ),
+                        <div>
+                            <h3>Nuestra Visión</h3>
+                            <p>
+                                Ser el centro de referencia nacional en soluciones integrales de gestión sanguínea y diagnósticos clínicos, promoviendo la donación voluntaria de sangre y el uso inteligente de la tecnología como pilares para el fortalecimiento del sistema hospitalario venezolano.
+                            </p>
+                        </div>
+                    </div>
 
-            React.createElement(
-                "div",
-                { className: "values" },
-                React.createElement("h3", null, "Nuestros Valores"),
-                React.createElement(
-                    "div",
-                    { className: "values-grid" },
-                    values.map((value, index) =>
-                        React.createElement(
-                            "div",
-                            { key: index, className: "value-item" },
-                            React.createElement(
-                                "div",
-                                { className: `value-icon ${value.color}` },
-                                React.createElement(Icon, { name: value.icon })
-                            ),
-                            React.createElement("h4", null, value.title),
-                            React.createElement("p", null, value.description)
-                        )
-                    )
-                )
-            )
-        )
-    );
-};
+                    <div className="about-features">
+                        <div className="features-grid">
+                            {features.map((feature, index) => (
+                                <div key={index} className="feature-item">
+                                    <div className={`feature-item-icon ${feature.color}`}>
+                                        <Icon name={feature.icon} />
+                                    </div>
+                                    <h4>{feature.title}</h4>
+                                    <p>{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
 
-// Componente Services
+                <div className="values">
+                    <h3>Nuestros Valores</h3>
+                    <div className="values-grid">
+                        {values.map((value, index) => (
+                            <div key={index} className="value-item">
+                                <div className={`value-icon ${value.color}`}>
+                                    <Icon name={value.icon} />
+                                </div>
+                                <h4>{value.title}</h4>
+                                <p>{value.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    )
+}
+
+// Services Section Component
 const ServicesSection = ({ scrollToSection }) => {
     const services = [
         {
             icon: "activity",
             title: "Análisis Clínicos",
-            description:
-                "Exámenes de laboratorio completos con tecnología de vanguardia y resultados precisos.",
-            features: [
-                "Hematología completa",
-                "Química sanguínea",
-                "Perfil lipídico",
-                "Marcadores tumorales",
-            ],
+            description: "Exámenes de laboratorio completos con tecnología de vanguardia y resultados precisos.",
+            features: ["Hematología completa", "Química sanguínea", "Perfil tiroideo, renal, hepático y lipídico", "Pruebas hormonales y marcadores tumorales"],
         },
         {
             icon: "heart",
             title: "Banco de Sangre",
-            description:
-                "Servicios especializados en donación, procesamiento y suministro de componentes sanguíneos.",
-            features: [
-                "Donación de sangre",
-                "Tipificación sanguínea",
-                "Pruebas cruzadas",
-                "Componentes sanguíneos",
-            ],
+            description: "Servicios especializados en donación, procesamiento y suministro de componentes sanguíneos.",
+            features: ["Donación de sangre", "Tipificación sanguínea", "Pruebas cruzadas", "Componentes sanguíneos"],
         },
-        {
-            icon: "microscope",
-            title: "Microbiología",
-            description:
-                "Diagnóstico microbiológico especializado para la detección de patógenos.",
-            features: ["Cultivos bacterianos", "Antibiogramas", "Parasitología", "Micología clínica"],
-        },
-        {
-            icon: "userCheck",
-            title: "Medicina Preventiva",
-            description: "Programas de prevención y chequeos médicos para mantener tu salud óptima.",
-            features: ["Chequeos ejecutivos", "Medicina ocupacional", "Vacunación", "Programas preventivos"],
-        },
-    ];
+    ]
 
-    return React.createElement(
-        "section",
-        { id: "servicios", className: "services" },
-        React.createElement(
-            "div",
-            { className: "container" },
-            React.createElement(
-                "div",
-                { className: "section-header" },
-                React.createElement("h2", null, "Nuestros Servicios"),
-                React.createElement(
-                    "p",
-                    null,
-                    "Ofrecemos una amplia gama de servicios médicos especializados con la más alta calidad y tecnología de vanguardia para cuidar tu salud."
-                )
-            ),
+    return (
+        <section id="servicios" className="services">
+            <div className="container">
+                <div className="section-header">
+                    <h2>Nuestros Servicios</h2>
+                    <p>
+                        Ofrecemos una amplia gama de servicios médicos especializados con la más alta calidad y tecnología de
+                        vanguardia para cuidar tu salud.
+                    </p>
+                </div>
 
-            React.createElement(
-                "div",
-                { className: "services-grid" },
-                services.map((service, index) =>
-                    React.createElement(
-                        "div",
-                        { key: index, className: "service-card" },
-                        React.createElement(
-                            "div",
-                            { className: "service-header" },
-                            React.createElement(
-                                "div",
-                                { className: "service-icon" },
-                                React.createElement(Icon, { name: service.icon })
-                            ),
-                            React.createElement("h3", { className: "service-title" }, service.title)
-                        ),
-                        React.createElement("p", { className: "service-description" }, service.description),
-                        React.createElement(
-                            "div",
-                            { className: "service-features" },
-                            React.createElement("h4", null, "Incluye:"),
-                            React.createElement(
-                                "ul",
-                                null,
-                                service.features.map((feature, featureIndex) =>
-                                    React.createElement("li", { key: featureIndex }, feature)
-                                )
-                            )
-                        )
-                    )
-                )
-            ),
+                <div className="services-grid">
+                    {services.map((service, index) => (
+                        <div key={index} className="service-card">
+                            <div className="service-header">
+                                <div className="service-icon">
+                                    <Icon name={service.icon} />
+                                </div>
+                                <h3 className="service-title">{service.title}</h3>
+                            </div>
+                            <p className="service-description">{service.description}</p>
+                            <div className="service-features">
+                                <h4>Incluye:</h4>
+                                <ul>
+                                    {service.features.map((feature, featureIndex) => (
+                                        <li key={featureIndex}>{feature}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
-            React.createElement(
-                "div",
-                { className: "services-cta" },
-                React.createElement("h3", null, "¿Necesitas más información sobre nuestros servicios?"),
-                React.createElement("p", null, "Nuestro equipo de especialistas está listo para atenderte"),
-                React.createElement(
-                    "button",
-                    {
-                        className: "btn btn-white",
-                        onClick: () => scrollToSection("contacto"),
-                    },
-                    "Contáctanos Ahora ",
-                    React.createElement(Icon, { name: "chevronRight" })
-                )
-            )
-        )
-    );
-};
+                <div className="services-cta">
+                    <h3>¿Necesitas más información sobre nuestros servicios?</h3>
+                    <p>Nuestro equipo de especialistas está listo para atenderte</p>
+                    <button className="btn btn-white" onClick={() => scrollToSection("contacto")}>
+                        Contáctanos Ahora <Icon name="chevronRight" />
+                    </button>
+                </div>
+            </div>
+        </section>
+    )
+}
 
-// Componente Contact
+// Contact Section Component
 const ContactSection = () => {
     const contactInfo = [
         {
             icon: "phone",
             title: "Teléfono",
             description: "Llámanos para agendar tu cita",
-            info: ["+58 212-555-0123", "+58 414-555-0456"],
+            info: ["+58 414-734.57.32", "+58 412-161.72.97"],
             color: "red",
         },
         {
             icon: "mail",
             title: "Email",
             description: "Escríbenos para más información",
-            info: ["info@biosangrecenter.com", "citas@biosangrecenter.com"],
+            info: ["biosangrecenterinfo@gmail.com", "biosangrecentercitas@gmail.com"],
             color: "blue",
         },
         {
             icon: "mapPin",
             title: "Ubicación",
             description: "Visítanos en nuestra sede principal",
-            info: ["Av. Principal, Centro Médico", "Caracas, Venezuela"],
+            info: ["Av España, San Cristobal, Tachira, Venezuela"],
             color: "green",
         },
-    ];
-    // Continuación de ContactSection
+    ]
 
-    return React.createElement(
-        "section",
-        { id: "contacto", className: "contact" },
-        React.createElement(
-            "div",
-            { className: "container" },
-            React.createElement(
-                "div",
-                { className: "section-header" },
-                React.createElement("h2", null, "Contáctanos"),
-                React.createElement(
-                    "p",
-                    null,
-                    "Estamos aquí para atenderte. Comunícate con nosotros para más información sobre nuestros servicios o para agendar una cita."
-                )
-            ),
+    return (
+        <section id="contacto" className="contact">
+            <div className="container">
+                <div className="section-header">
+                    <h2>Contáctanos</h2>
+                    <p>
+                        Estamos aquí para atenderte. Comunícate con nosotros para más información sobre nuestros servicios o para
+                        agendar una cita.
+                    </p>
+                </div>
 
-            React.createElement(
-                "div",
-                { className: "contact-grid" },
-                contactInfo.map((contact, index) =>
-                    React.createElement(
-                        "div",
-                        { key: index, className: "contact-card" },
-                        React.createElement(
-                            "div",
-                            { className: `contact-icon ${contact.color}` },
-                            React.createElement(Icon, { name: contact.icon })
-                        ),
-                        React.createElement("h3", null, contact.title),
-                        React.createElement("p", null, contact.description),
-                        React.createElement(
-                            "div",
-                            { className: "contact-info" },
-                            contact.info.map((info, infoIndex) =>
-                                React.createElement("p", { key: infoIndex }, info)
-                            )
-                        )
-                    )
-                )
-            ),
+                <div className="contact-grid">
+                    {contactInfo.map((contact, index) => (
+                        <div key={index} className="contact-card">
+                            <div className={`contact-icon ${contact.color}`}>
+                                <Icon name={contact.icon} />
+                            </div>
+                            <h3>{contact.title}</h3>
+                            <p>{contact.description}</p>
+                            <div className="contact-info">
+                                {contact.info.map((info, infoIndex) => (
+                                    <p key={infoIndex}>{info}</p>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
-            React.createElement(
-                "div",
-                { className: "schedule" },
-                React.createElement("h3", null, "Horarios de Atención"),
-                React.createElement(
-                    "div",
-                    { className: "schedule-grid" },
-                    React.createElement(
-                        "div",
-                        { className: "schedule-item" },
-                        React.createElement("h4", null, "Laboratorio Clínico"),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement("span", null, "Lunes a Viernes:"),
-                            " 6:00 AM - 6:00 PM"
-                        ),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement("span", null, "Sábados:"),
-                            " 7:00 AM - 2:00 PM"
-                        ),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement("span", null, "Domingos:"),
-                            " 8:00 AM - 12:00 PM"
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "schedule-item" },
-                        React.createElement("h4", null, "Banco de Sangre"),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement("span", null, "24 horas:"),
-                            " Emergencias"
-                        ),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement("span", null, "Donaciones:"),
-                            " Lun-Vie 8:00 AM - 4:00 PM"
-                        ),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement("span", null, "Sábados:"),
-                            " 8:00 AM - 2:00 PM"
-                        )
-                    )
-                )
-            )
-        )
-    );
-};
+                <div className="schedule">
+                    <h3>Horarios de Atención</h3>
+                    <div className="schedule-grid">
+                        <div className="schedule-item">
+                            <h4>Laboratorio Clínico</h4>
+                            <p>
+                                <span>Lunes a Viernes:</span> 7:00 AM - 6:00 PM
+                            </p>
+                            <p>
+                                <span>Sábados:</span> 7:00 AM - 2:00 PM
+                            </p>
+                            <p>
+                                <span>Domingos:</span> 8:00 AM - 12:00 PM
+                            </p>
+                        </div>
+                        <div className="schedule-item">
+                            <h4>Banco de Sangre</h4>
+                            <p>
+                                <span>24 horas:</span> Emergencias
+                            </p>
+                            <p>
+                                <span>Donaciones:</span> Lun-Vie 8:00 AM - 4:00 PM
+                            </p>
+                            <p>
+                                <span>Sábados:</span> 8:00 AM - 2:00 PM
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    )
+}
 
-// Componente Footer
+// Footer Component
 const Footer = ({ scrollToSection }) => {
-    return React.createElement(
-        "footer",
-        { className: "footer" },
-        React.createElement(
-            "div",
-            { className: "container" },
-            React.createElement(
-                "div",
-                { className: "footer-content" },
-                React.createElement(
-                    "div",
-                    { className: "footer-section" },
-                    React.createElement(
-                        "div",
-                        { className: "logo" },
-                        React.createElement(
-                            "div",
-                            { className: "logo-icon" },
-                            React.createElement(Icon, { name: "heart" })
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "logo-text" },
-                            React.createElement("h3", null, "Biosangre Center"),
-                            React.createElement("p", null, "C.A")
-                        )
-                    ),
-                    React.createElement(
-                        "p",
-                        null,
-                        "Comprometidos con tu salud y bienestar desde hace más de 15 años, ofreciendo servicios médicos de la más alta calidad."
-                    )
-                ),
+    return (
+        <footer className="footer">
+            <div className="container">
+                <div className="footer-content">
+                    <div className="footer-section">
+                        <div className="logo">
+                            <div>
+                                <img src="logoBiosangreCenter.png" alt="Biosangre Center Logo" width={"100px"} height={"100px"} />
+                            </div>
+                            <div className="logo-text">
+                                <h3>Biosangre Center</h3>
+                                <p>C.A</p>
+                            </div>
+                        </div>
+                        <p>
+                            Comprometidos con tu salud y bienestar, ofreciendo servicios médicos de la más
+                            alta calidad.
+                        </p>
+                    </div>
 
-                React.createElement(
-                    "div",
-                    { className: "footer-section" },
-                    React.createElement("h4", null, "Servicios"),
-                    React.createElement(
-                        "ul",
-                        null,
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Análisis Clínicos")),
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Banco de Sangre")),
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Microbiología")),
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Medicina Preventiva"))
-                    )
-                ),
+                    <div className="footer-section">
+                        <h4>Servicios</h4>
+                        <ul>
+                            <li>
+                                <button onClick={() => scrollToSection("servicios")}>Analisis de laboratorio</button>
+                            </li>
+                            <li>
+                                <button onClick={() => scrollToSection("servicios")}>Banco de sangre</button>
+                            </li>
+                        </ul>
+                    </div>
 
-                React.createElement(
-                    "div",
-                    { className: "footer-section" },
-                    React.createElement("h4", null, "Empresa"),
-                    React.createElement(
-                        "ul",
-                        null,
-                        React.createElement(
-                            "li",
-                            null,
-                            React.createElement(
-                                "button",
-                                {
-                                    onClick: () => scrollToSection("quienes-somos"),
-                                },
-                                "Quiénes Somos"
-                            )
-                        ),
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Certificaciones")),
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Trabaja con Nosotros")),
-                        React.createElement("li", null, React.createElement("a", { href: "#" }, "Política de Privacidad"))
-                    )
-                ),
+                    <div className="footer-section">
+                        <h4>Empresa</h4>
+                        <ul>
+                            <li>
+                                <button onClick={() => scrollToSection("quienes-somos")}>Quiénes Somos</button>
+                            </li>
+                            <li>
+                                Certificaciones
+                            </li>
+                            <li>
+                                Trabaja con Nosotros
+                            </li>
+                            <li>
+                                Politica de Privacidad
+                            </li>
+                        </ul>
+                    </div>
 
-                React.createElement(
-                    "div",
-                    { className: "footer-section" },
-                    React.createElement("h4", null, "Contacto"),
-                    React.createElement(
-                        "div",
-                        { className: "footer-contact" },
-                        React.createElement(Icon, { name: "phone" }),
-                        React.createElement("span", null, "+58 212-555-0123")
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "footer-contact" },
-                        React.createElement(Icon, { name: "mail" }),
-                        React.createElement("span", null, "info@biosangrecenter.com")
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "footer-contact" },
-                        React.createElement(Icon, { name: "mapPin" }),
-                        React.createElement("span", null, "Caracas, Venezuela")
-                    )
-                )
-            ),
+                    <div className="footer-section">
+                        <h4>Contacto</h4>
+                        <div className="footer-contact">
+                            <Icon name="phone" />
+                            <span>+58 412-161.72.97</span>
+                        </div>
+                        <div className="footer-contact">
+                            <Icon name="mail" />
+                            <span>biosangrecenterinfo@gmail.com</span>
+                        </div>
+                        <div className="footer-contact">
+                            <Icon name="mapPin" />
+                            <span>San Cristobal,Tachira, Venezuela</span>
+                        </div>
+                    </div>
+                </div>
 
-            React.createElement(
-                "div",
-                { className: "footer-bottom" },
-                React.createElement(
-                    "p",
-                    null,
-                    `© ${new Date().getFullYear()} Biosangre Center C.A. Todos los derechos reservados.`
-                )
-            )
-        )
-    );
-};
+                <div className="footer-bottom">
+                    <p>© {new Date().getFullYear()} Biosangre Center C.A. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    )
+}
 
-// Componente Principal App
+// Main App Component
 const App = () => {
-    const [activeSection, setActiveSection] = React.useState("inicio");
+    const [activeSection, setActiveSection] = useState("inicio")
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleScroll = () => {
-            const sections = ["inicio", "quienes-somos", "servicios", "contacto"];
-            const scrollPosition = window.scrollY + 100;
+            const sections = ["inicio", "quienes-somos", "servicios", "contacto"]
+            const scrollPosition = window.scrollY + 100
 
             for (const section of sections) {
-                const element = document.getElementById(section);
+                const element = document.getElementById(section)
                 if (element) {
-                    const offsetTop = element.offsetTop;
-                    const offsetHeight = element.offsetHeight;
+                    const offsetTop = element.offsetTop
+                    const offsetHeight = element.offsetHeight
 
                     if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-                        setActiveSection(section);
-                        break;
+                        setActiveSection(section)
+                        break
                     }
                 }
             }
-        };
+        }
 
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [])
 
     const scrollToSection = (sectionId) => {
-        const element = document.getElementById(sectionId);
+        const element = document.getElementById(sectionId)
         if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
+            element.scrollIntoView({ behavior: "smooth" })
         }
-    };
+    }
 
-    return React.createElement(
-        "div",
-        null,
-        React.createElement(Header, { activeSection, scrollToSection }),
-        React.createElement(HeroSection, { scrollToSection }),
-        React.createElement(AboutSection),
-        React.createElement(ServicesSection, { scrollToSection }),
-        React.createElement(ContactSection),
-        React.createElement(Footer, { scrollToSection })
-    );
-};
+    return (
+        <div>
+            <Header activeSection={activeSection} scrollToSection={scrollToSection} />
+            <HeroSection scrollToSection={scrollToSection} />
+            <AboutSection />
+            <ServicesSection scrollToSection={scrollToSection} />
+            <ContactSection />
+            <Footer scrollToSection={scrollToSection} />
+        </div>
+    )
+}
+
 export default App;
