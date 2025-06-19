@@ -1,5 +1,7 @@
 import React from "react"
 import "./App.css"
+import { FaHeart as Heart, FaChartBar as Activity } from 'react-icons/fa';
+import { FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight } from 'react-icons/fa';
 const { useState, useEffect } = React
 
 // Icons Component
@@ -20,6 +22,8 @@ const Icon = ({ name, className = "" }) => {
         menu: "☰",
         x: "✕",
         adn: "🧬",
+        fileText: "📄",
+        calendar: "📅",
     }
 
     return <span className={className}>{icons[name] || "?"}</span>
@@ -198,19 +202,19 @@ const AboutSection = () => {
 
     const values = [
         {
-            icon: "heart",
+            img: "compromiso.jpg",
             title: "Compromiso",
             description: "Dedicados al bienestar y la salud de nuestros pacientes",
             color: "red",
         },
         {
-            icon: "shield",
+            img: "integridad.jpeg",
             title: "Integridad",
             description: "Actuamos con honestidad y transparencia en todos nuestros procesos",
             color: "blue",
         },
         {
-            icon: "award",
+            img: "excelencia.jpg",
             title: "Excelencia",
             description: "Buscamos la mejora continua en todos nuestros servicios",
             color: "green",
@@ -259,22 +263,27 @@ const AboutSection = () => {
                     </div>
                 </div>
 
-                <div className="values">
-                    <h3>Nuestros Valores</h3>
-                    <div className="values-grid">
+
+                <div className="values text-center">
+                    <h3 className="text-2xl font-bold text-red-700 mb-8">Nuestros Valores</h3>
+                    <div className="values-grid grid md:grid-cols-3 gap-6">
                         {values.map((value, index) => (
-                            <div key={index} className="value-item">
-                                <div className={`value-icon ${value.color}`}>
-                                    <Icon name={value.icon} />
+                            <div key={index} className="value-item p-4 border rounded-lg shadow">
+                                <div className="mb-4 flex justify-center">
+                                    <img
+                                        src={value.img}
+                                        alt={value.title}
+                                        style={{ width: "100px", height: "100px", borderRadius: "50%" }}
+                                    />
                                 </div>
-                                <h4>{value.title}</h4>
-                                <p>{value.description}</p>
+                                <h4 className="text-lg font-semibold text-gray-800">{value.title}</h4>
+                                <p className="text-gray-600">{value.description}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
-        </section>
+        </section >
     )
 }
 
@@ -282,18 +291,75 @@ const AboutSection = () => {
 const ServicesSection = ({ scrollToSection }) => {
     const services = [
         {
-            icon: "activity",
+            icon: Activity,
             title: "Análisis Clínicos",
             description: "Exámenes de laboratorio completos con tecnología de vanguardia y resultados precisos.",
-            features: ["Hematología completa", "Química sanguínea", "Perfil tiroideo, renal, hepático y lipídico", "Pruebas hormonales y marcadores tumorales"],
+            features: [
+                "Hematología completa",
+                "Química sanguínea",
+                "Perfil tiroideo, renal, hepático y lipídico",
+                "Pruebas hormonales y marcadores tumorales",
+            ],
+            images: [
+                "analisis1.jpg",
+                "analisis2.jpeg",
+                "analisis3.jpg",
+            ],
         },
         {
-            icon: "heart",
+            icon: Heart,
             title: "Banco de Sangre",
             description: "Servicios especializados en donación, procesamiento y suministro de componentes sanguíneos.",
             features: ["Donación de sangre", "Tipificación sanguínea", "Pruebas cruzadas", "Componentes sanguíneos"],
+            images: [
+                "banco1.webp",
+                "banco2.webp",
+                "banco3.webp",
+            ],
         },
     ]
+
+    // Estado para manejar los carruseles
+    const [currentSlides, setCurrentSlides] = useState([0, 0])
+    // Auto-play para los carruseles
+    useEffect(() => {
+        const intervals = services.map((_, serviceIndex) => {
+            return setInterval(() => {
+                setCurrentSlides((prev) => {
+                    const newSlides = [...prev]
+                    newSlides[serviceIndex] = (newSlides[serviceIndex] + 1) % services[serviceIndex].images.length
+                    return newSlides
+                })
+            }, 3000)
+        })
+
+        return () => intervals.forEach(clearInterval)
+    })
+
+    const nextSlide = (serviceIndex) => {
+        setCurrentSlides((prev) => {
+            const newSlides = [...prev]
+            newSlides[serviceIndex] = (newSlides[serviceIndex] + 1) % services[serviceIndex].images.length
+            return newSlides
+        })
+    }
+
+    const prevSlide = (serviceIndex) => {
+        setCurrentSlides((prev) => {
+            const newSlides = [...prev]
+            newSlides[serviceIndex] =
+                newSlides[serviceIndex] === 0 ? services[serviceIndex].images.length - 1 : newSlides[serviceIndex] - 1
+            return newSlides
+        })
+    }
+
+    const goToSlide = (serviceIndex, slideIndex) => {
+        setCurrentSlides((prev) => {
+            const newSlides = [...prev]
+            newSlides[serviceIndex] = slideIndex
+            return newSlides
+        })
+    }
 
     return (
         <section id="servicios" className="services">
@@ -307,33 +373,255 @@ const ServicesSection = ({ scrollToSection }) => {
                 </div>
 
                 <div className="services-grid">
+                    {services.map((service, index) => {
+                        const IconComponent = service.icon
+                        return (
+                            <div key={index} className="service-row">
+                                {/* Servicio */}
+                                <div className="service-card">
+                                    <div className="service-header">
+                                        <div className="service-icon">
+                                            <IconComponent size={24} />
+                                        </div>
+                                        <h3 className="service-title">{service.title}</h3>
+                                    </div>
+                                    <p className="service-description">{service.description}</p>
+                                    <div className="service-features">
+                                        <h4>Incluye:</h4>
+                                        <ul>
+                                            {service.features.map((feature, featureIndex) => (
+                                                <li key={featureIndex}>{feature}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Carrusel */}
+                                <div className="carousel-wrapper">
+                                    <div className="carousel-container">
+                                        <button
+                                            className="carousel-btn carousel-btn-prev"
+                                            onClick={() => prevSlide(index)}
+                                            aria-label="Imagen anterior"
+                                        >
+                                            <ChevronLeft size={20} />
+                                        </button>
+
+                                        <div className="carousel-images">
+                                            {service.images.map((img, imgIndex) => (
+                                                <div
+                                                    key={imgIndex}
+                                                    className={`carousel-slide ${imgIndex === currentSlides[index] ? "active" : ""}`}
+                                                >
+                                                    <img
+                                                        src={img || "/placeholder.svg"}
+                                                        alt={`${service.title} ${imgIndex + 1}`}
+                                                        className="carousel-image"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <button
+                                            className="carousel-btn carousel-btn-next"
+                                            onClick={() => nextSlide(index)}
+                                            aria-label="Siguiente imagen"
+                                        >
+                                            <ChevronRight size={20} />
+                                        </button>
+                                    </div>
+
+                                    {/* Dots indicator */}
+                                    <div className="carousel-dots">
+                                        {service.images.map((_, imgIndex) => (
+                                            <button
+                                                key={imgIndex}
+                                                className={`carousel-dot ${imgIndex === currentSlides[index] ? "active" : ""}`}
+                                                onClick={() => goToSlide(index, imgIndex)}
+                                                aria-label={`Ir a imagen ${imgIndex + 1}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        </section>
+    )
+}
+
+const AccessSection = ({ scrollToSection }) => {
+    const services = [
+        {
+            icon: "fileText",
+            title: "Resultados Médicos",
+            description: "Consulta tus análisis clínicos de forma inmediata y segura",
+            color: "red",
+            formFields: [
+                {
+                    id: "resultId",
+                    name: "resultId",
+                    type: "text",
+                    label: "ID de Resultado",
+                    placeholder: "Ingresa tu ID de resultado",
+                },
+            ],
+            buttonText: "Ver Mis Resultados",
+        },
+        {
+            icon: "calendar",
+            title: "Agendar Cita",
+            description: "Programa tu consulta médica en el horario que prefieras",
+            color: "blue",
+            formFields: [
+                {
+                    id: "appointmentDate",
+                    name: "appointmentDate",
+                    type: "date",
+                    label: "Fecha",
+                    placeholder: "",
+                },
+                {
+                    id: "appointmentTime",
+                    name: "appointmentTime",
+                    type: "time",
+                    label: "Hora",
+                    placeholder: "",
+                },
+            ],
+            buttonText: "Agendar Mi Cita",
+        },
+        {
+            icon: "heart",
+            title: "Donación de Sangre",
+            description: "Registra tu donación y ayuda a salvar vidas",
+            color: "green",
+            formFields: [
+                {
+                    id: "donorName",
+                    name: "donorName",
+                    type: "text",
+                    label: "Nombre Completo",
+                    placeholder: "Tu nombre completo",
+                },
+                {
+                    id: "donorEmail",
+                    name: "donorEmail",
+                    type: "email",
+                    label: "Correo Electrónico",
+                    placeholder: "tu@email.com",
+                },
+                {
+                    id: "donationDate",
+                    name: "donationDate",
+                    type: "date",
+                    label: "Fecha de Donación",
+                    placeholder: "",
+                },
+            ],
+            buttonText: "Registrar Donación",
+        },
+    ]
+
+    const stats = [
+        { number: "10,000+", label: "Resultados Entregados", color: "red" },
+        { number: "5,000+", label: "Citas Agendadas", color: "blue" },
+        { number: "2,500+", label: "Donaciones Registradas", color: "green" },
+    ]
+
+    return (
+        <section id="acceso" className="access-section">
+            {/* Background decorative elements */}
+            <div className="access-bg-decoration"></div>
+            <div className="access-bg-circle-1"></div>
+            <div className="access-bg-circle-2"></div>
+
+            <div className="container">
+                {/* Header Section */}
+                <div className="section-header">
+                    <div className="header-icon">
+                        <Icon name="heart" />
+                    </div>
+                    <h2>
+                        Portal de <span className="text-highlight">Servicios</span>
+                    </h2>
+                    <p>
+                        Accede a tus resultados médicos, agenda citas y gestiona tus donaciones de sangre de manera rápida, segura y
+                        completamente digital.
+                    </p>
+                </div>
+
+                {/* Services Grid */}
+                <div className="access-grid">
                     {services.map((service, index) => (
-                        <div key={index} className="service-card">
-                            <div className="service-header">
-                                <div className="service-icon">
+                        <div key={index} className={`access-card access-card-${service.color}`}>
+                            <div className="access-card-header">
+                                <div className={`access-icon access-icon-${service.color}`}>
                                     <Icon name={service.icon} />
                                 </div>
-                                <h3 className="service-title">{service.title}</h3>
+                                <h3 className="access-title">{service.title}</h3>
+                                <p className="access-description">{service.description}</p>
                             </div>
-                            <p className="service-description">{service.description}</p>
-                            <div className="service-features">
-                                <h4>Incluye:</h4>
-                                <ul>
-                                    {service.features.map((feature, featureIndex) => (
-                                        <li key={featureIndex}>{feature}</li>
+
+                            <form className="access-form">
+                                <div className="form-fields">
+                                    {service.formFields.map((field, fieldIndex) => (
+                                        <div key={fieldIndex} className="form-field">
+                                            <label htmlFor={field.id} className="form-label">
+                                                {field.label}
+                                            </label>
+                                            <input
+                                                type={field.type}
+                                                id={field.id}
+                                                name={field.name}
+                                                placeholder={field.placeholder}
+                                                required
+                                                className={`form-input form-input-${service.color}`}
+                                            />
+                                        </div>
                                     ))}
-                                </ul>
-                            </div>
+                                </div>
+                                <button type="submit" className={`btn btn-${service.color} btn-full`}>
+                                    <Icon name={service.icon} />
+                                    {service.buttonText}
+                                </button>
+                            </form>
                         </div>
                     ))}
                 </div>
 
-                <div className="services-cta">
-                    <h3>¿Necesitas más información sobre nuestros servicios?</h3>
-                    <p>Nuestro equipo de especialistas está listo para atenderte</p>
-                    <button className="btn btn-white" onClick={() => scrollToSection("contacto")}>
-                        Contáctanos Ahora <Icon name="chevronRight" />
-                    </button>
+                {/* Contact CTA Section */}
+                <div className="access-cta">
+                    <div className="cta-icon">
+                        <Icon name="phone" />
+                    </div>
+                    <h3>¿Necesitas Ayuda Personalizada?</h3>
+                    <p>
+                        Nuestro equipo de especialistas está disponible para resolver todas tus dudas y brindarte la mejor atención
+                        médica.
+                    </p>
+                    <div className="cta-actions">
+                        <button className="btn btn-white" onClick={() => scrollToSection("contacto")}>
+                            <Icon name="phone" />
+                            Contáctanos Ahora
+                        </button>
+                        <div className="cta-availability">
+                            <Icon name="clock" />
+                            <span>Disponible 24/7</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Stats Section */}
+                <div className="access-stats">
+                    {stats.map((stat, index) => (
+                        <div key={index} className="stat-item">
+                            <div className={`stat-number stat-number-${stat.color}`}>{stat.number}</div>
+                            <div className="stat-label">{stat.label}</div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
@@ -543,9 +831,10 @@ const App = () => {
         <div>
             <Header activeSection={activeSection} scrollToSection={scrollToSection} />
             <HeroSection scrollToSection={scrollToSection} />
-            <AboutSection />
+            <AboutSection scrollToSection={scrollToSection} />
             <ServicesSection scrollToSection={scrollToSection} />
-            <ContactSection />
+            <AccessSection scrollToSection={scrollToSection} />
+            <ContactSection scrollToSection={scrollToSection} />
             <Footer scrollToSection={scrollToSection} />
         </div>
     )
